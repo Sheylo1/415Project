@@ -21,6 +21,11 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/register.html');
 });
 
+// Route to serve the login page:
+app.get('/login.html', function(req, res) {
+  res.sendFile(__dirname + '/login.html');
+});
+
 // Route to handle registration:
 app.post('/register', async function(req, res) {
   const { userID, userPASS } = req.body;
