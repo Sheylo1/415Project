@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = 3000;
 
+const uri = "your_mongodb_uri"; // Replace 'your_mongodb_uri' with your actual MongoDB URI
+
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
 
@@ -25,8 +27,30 @@ app.get('/', function(req, res) {
   }
 });
 
-app.get('/say/:name', function(req, res) {
-  res.send('Hello ' + req.params.name + '!');
+// Route to handle registration:
+app.post('/register', async function(req, res) {
+  const { userID, userPASS } = req.body;
+
+  // Connect to MongoDB
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+
+    const database = client.db('crlmdb');
+    const collection = database.collection('credentials');
+
+    // Insert user data into MongoDB
+    const result = await collection.insertOne({ userID, userPASS });
+    console.log("User registered:", result.ops[0]);
+
+    res.send('User registered successfully!');
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).send('Error during registration');
+  } finally {
+    await client.close();
+  }
 });
 
 // Route to access database:
