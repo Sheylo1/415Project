@@ -2,7 +2,7 @@
   "name": "MongoExpressAuth",
   "version": "1.0.0",
   "description": "CRLs Express Mongo Test on Render",
-  "main": "testmongo.js",
+  "main": "ExpressAuth.js",
   "repository": "https://github.com/ckorpio/MongoRender",
   "author": "CRL",
   "license": "MIT",
