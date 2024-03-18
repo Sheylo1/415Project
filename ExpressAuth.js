@@ -44,7 +44,9 @@ app.post('/register', async function(req, res) {
     const result = await collection.insertOne({ userID, userPASS });
     console.log("User registered:", result.ops[0]);
 
-    res.send('User registered successfully!');
+    // Redirect to login page after successful registration
+    res.redirect('/');
+
   } catch (error) {
     console.error("Error during registration:", error);
     res.status(500).send('Error during registration');
