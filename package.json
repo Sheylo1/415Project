@@ -1,0 +1,21 @@
+{
+  "name": "MongoExpressAuth",
+  "version": "1.0.0",
+  "description": "CRLs Express Mongo Test on Render",
+  "main": "testmongo.js",
+  "repository": "https://github.com/ckorpio/MongoRender",
+  "author": "CRL",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node testmongo.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cookie-parser": "^1.4.6",
+    "mongodb": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
