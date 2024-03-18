@@ -22,7 +22,7 @@ client.connect(err => {
     console.log("Connected to MongoDB");
 
     const database = client.db('crlmdb');
-    const collection = database.collection('cmps415');
+    const collection = database.collection('credentials');
 
     // Default endpoint
     app.get('/', (req, res) => {
