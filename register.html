@@ -144,14 +144,15 @@
             <div class="text">
                 Registration Form
             </div>
-            <form action="#">
+            <!-- Updated form action and added name attributes -->
+            <form action="/register" method="post">
                 <div class="data">
                     <label>Username</label>
-                    <input type="userID" required>
+                    <input type="text" name="userID" required>
                 </div>
                 <div class="data">
                     <label>Password</label>
-                    <input type="userPASS" required>
+                    <input type="password" name="userPASS" required>
                 </div>
                 <div class="btn">
                     <div class="inner"></div>
