@@ -15,20 +15,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
-// Middleware to check for cookies and route accordingly
-app.use((req, res, next) => {
-  // Check if the 'authenticated' cookie is set
-  if (req.cookies.authenticated) {
-    res.redirect('/login'); // Redirect to login page if the user has a cookie
-  } else {
-    res.redirect('/register'); // Redirect to register page if the user does not have a cookie
-  }
-});
-
 // Default route:
 app.get('/', function(req, res) {
-  // This route is not accessed directly by the user.
-  // Users are redirected based on cookie status in the middleware.
+  // Check if the authentication cookie exists
+  if (req.cookies.authenticated) {
+    // If the authentication cookie exists, route to the login page
+    res.sendFile(__dirname + '/login.html');
+  } else {
+    // If the authentication cookie does not exist, route to the register page
+    res.sendFile(__dirname + '/register.html');
+  }
 });
 
 // Route to handle registration:
@@ -48,12 +44,12 @@ app.post('/register', async function(req, res) {
     await collection.insertOne({ userID, userPASS });
     console.log("User registered:", userID);
 
-    // Set authenticated cookie after successful registration
-    res.cookie('authenticated', true);
-    res.redirect('/login'); // Redirect to login page after successful registration
+    // Redirect to login page after successful registration
+    res.redirect('/');
 
   } catch (error) {
     console.error("Error during registration:", error);
+    res.status(500).send('Error during registration');
   } finally {
     await client.close();
   }
@@ -61,15 +57,28 @@ app.post('/register', async function(req, res) {
 
 // Route to access database:
 app.get('/api/mongo/:item', function(req, res) {
-  // Route to access database (unchanged)
-});
+  const client = new MongoClient(uri);
+  const searchKey = "{ userID: '" + req.params.item + "' }"; // Adjusted to userID
+  console.log("Looking for: " + searchKey);
 
-// Route to serve register page:
-app.get('/register', function(req, res) {
-  res.sendFile(__dirname + '/register.html');
-});
+  async function run() {
+    try {
+      const database = client.db('crlmdb');
+      const parts = database.collection('credentials');
 
-// Route to serve login page:
-app.get('/login', function(req, res) {
-  res.sendFile(__dirname + '/login.html');
+      // Hardwired Query for a part that has userID '12345'
+      // const query = { userID: '12345', userPASS: 'password' };
+      // But we will use the parameter provided with the route
+      const query = { userID: req.params.item };
+
+      const part = await parts.findOne(query);
+      console.log(part);
+      res.send('Found this: ' + JSON.stringify(part));  //Use stringify to print a json
+
+    } finally {
+      // Ensures that the client will close when you finish/error
+      await client.close();
+    }
+  }
+  run().catch(console.dir);
 });
