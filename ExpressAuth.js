@@ -42,10 +42,16 @@ app.post('/register', async function(req, res) {
 
     // Insert user data into MongoDB
     const result = await collection.insertOne({ userID, userPASS });
-    console.log("User registered:", result.ops[0]);
 
-    // Redirect to login page after successful registration
-    res.redirect('/');
+    // Check if insertion was successful
+    if (result.insertedCount === 1) {
+      console.log("User registered:", result.ops[0]);
+      // Redirect to login page after successful registration
+      res.redirect('/');
+    } else {
+      // If insertion was not successful, throw an error
+      throw new Error("Failed to insert user data");
+    }
 
   } catch (error) {
     console.error("Error during registration:", error);
