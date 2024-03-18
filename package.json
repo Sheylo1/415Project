@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "CRLs Express Mongo Test on Render",
   "main": "ExpressAuth.js",
-  "repository": "https://github.com/ckorpio/MongoRender",
+  "repository": "https://github.com/ItsChasesHub/MongoExpressAuth",
   "author": "CRL",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node testmongo.js"
+    "start": "node ExpressAuth.js"
   },
   "dependencies": {
     "express": "^4.18.2",
