@@ -18,10 +18,10 @@ app.get('/', function(req, res) {
   // Check if the authentication cookie exists
   if (req.cookies.authenticated) {
     // If the authentication cookie exists, route to the login page
-    res.sendFile(__dirname + '/public/login.html');
+    res.sendFile(__dirname + '/login.html');
   } else {
     // If the authentication cookie does not exist, route to the register page
-    res.sendFile(__dirname + '/public/register.html');
+    res.sendFile(__dirname + '/register.html');
   }
 });
 
