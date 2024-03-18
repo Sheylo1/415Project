@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = 3000;
 
-const uri = "your_mongodb_uri"; // Replace 'your_mongodb_uri' with your actual MongoDB URI
+const uri = "mongodb+srv://ExpressAccount:JvmdZ7svEXsLGfBn@cluster0.xheynkp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
