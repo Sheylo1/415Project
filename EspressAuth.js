@@ -1,107 +1,95 @@
-var express = require('express');
-var cookieParser = require('cookie-parser');
+const express = require('express');
+const cookieParser = require('cookie-parser');
 const { MongoClient } = require('mongodb');
 
-var app = express();
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Connection string for MongoDB Atlas
+// MongoDB connection
 const uri = "mongodb+srv://ExpressAccount:JvmdZ7svEXsLGfBn@cluster0.xheynkp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
-// Connect to MongoDB
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Connect to MongoDB
 client.connect(err => {
-  if (err) {
-    console.error("Error connecting to MongoDB:", err);
-    return;
-  }
-  console.log("Connected to MongoDB");
-
-  const database = client.db('crlmdb');
-  const collection = database.collection('cmps415');
-
-  // Default route
-  app.get('/', function (req, res) {
-    if (!req.cookies.auth) {
-      res.send(`
-        <h1>Login or Register</h1>
-        <form action="/login" method="post">
-          <label for="userID">User ID:</label><br>
-          <input type="text" id="userID" name="userID"><br>
-          <label for="password">Password:</label><br>
-          <input type="password" id="password" name="password"><br><br>
-          <input type="submit" value="Login">
-        </form>
-        <br>
-        <form action="/register" method="post">
-          <label for="userID">Desired User ID:</label><br>
-          <input type="text" id="userID" name="userID"><br>
-          <label for="password">Desired Password:</label><br>
-          <input type="password" id="password" name="password"><br><br>
-          <input type="submit" value="Register">
-        </form>
-      `);
-    } else {
-      res.send(`
-        <h1>Authentication Cookie Exists</h1>
-        <p>Cookie Value: ${req.cookies.auth}</p>
-      `);
+    if (err) {
+        console.error("Error connecting to MongoDB:", err);
+        return;
     }
-  });
+    console.log("Connected to MongoDB");
 
-  // Login route
-  app.post('/login', (req, res) => {
-    const { userID, password } = req.body;
-    collection.findOne({ userID, password }, (err, user) => {
-      if (err || !user) {
+    const database = client.db('crlmdb');
+    const collection = database.collection('cmps415');
+
+    // Default endpoint
+    app.get('/', (req, res) => {
+        if (req.cookies.auth) {
+            res.send(`Authentication cookie exists. Value: ${req.cookies.auth}`);
+        } else {
+            res.send(`
+                <h1>Login or Register</h1>
+                <a href="/login">Login</a> | <a href="/register">Register</a>
+            `);
+        }
+    });
+
+    // Register endpoint
+    app.get('/register', (req, res) => {
         res.send(`
-          <h1>Login Failed</h1>
-          <p>Invalid credentials. <a href="/">Go back</a></p>
+            <h1>Register</h1>
+            <form action="/register" method="post">
+                <input type="text" name="user_ID" placeholder="User ID" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
         `);
-      } else {
-        res.cookie('auth', userID, { maxAge: 60000 }); // Set cookie to expire in 1 minute
-        res.redirect('/');
-      }
     });
-  });
 
-  // Register route
-  app.post('/register', (req, res) => {
-    const { userID, password } = req.body;
-    collection.insertOne({ userID, password }, (err, result) => {
-      if (err) {
-        res.send(`<h1>Registration Failed</h1><p>Error: ${err.message}</p>`);
-      } else {
-        res.cookie('auth', userID, { maxAge: 60000 }); // Set cookie to expire in 1 minute
+    app.post('/register', async (req, res) => {
+        const { user_ID, password } = req.body;
+        await collection.insertOne({ user_ID, password });
         res.redirect('/');
-      }
     });
-  });
 
-  // View cookies route
-  app.get('/cookies', (req, res) => {
-    res.send(`
-      <h1>Active Cookies</h1>
-      <p>${JSON.stringify(req.cookies)}</p>
-      <p><a href="/">Back to Home</a></p>
-    `);
-  });
+    // Login endpoint
+    app.get('/login', (req, res) => {
+        res.send(`
+            <h1>Login</h1>
+            <form action="/login" method="post">
+                <input type="text" name="user_ID" placeholder="User ID" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        `);
+    });
 
-  // Clear cookie route
-  app.get('/clear-cookie', (req, res) => {
-    res.clearCookie('auth');
-    res.send(`
-      <h1>Cookie Cleared</h1>
-      <p><a href="/">Back to Home</a></p>
-    `);
-  });
+    app.post('/login', async (req, res) => {
+        const { user_ID, password } = req.body;
+        const user = await collection.findOne({ user_ID, password });
+        if (user) {
+            res.cookie('auth', 'authenticated', { maxAge: 60000 });
+            res.redirect('/');
+        } else {
+            res.send('Invalid user ID or password. <a href="/">Return to home</a>');
+        }
+    });
 
-  // Server listening
-  var server = app.listen(3000, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('app listening at %s : %s', host, port);
-  });
+    // Endpoint to show all active cookies
+    app.get('/showcookies', (req, res) => {
+        res.send(req.cookies);
+    });
+
+    // Endpoint to clear the authentication cookie
+    app.get('/clearcookie', (req, res) => {
+        res.clearCookie('auth');
+        res.send('Authentication cookie cleared. <a href="/">Return to home</a>');
+    });
+
+    // Start the server
+    app.listen(port, () => {
+        console.log(`Server started at http://localhost:${port}`);
+    });
 });
