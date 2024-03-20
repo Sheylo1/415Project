@@ -17,8 +17,14 @@ app.use(cookieParser());
 
 // Default route:
 app.get('/', function(req, res) {
-  // Route to the register page
-  res.sendFile(__dirname + '/register.html');
+  // Check for the existence of an authentication cookie
+  if (req.cookies.auth) {
+    // If authentication cookie exists, redirect to welcome page
+    res.redirect('/login.html');
+  } else {
+    // If authentication cookie does not exist, present login or registration form
+    res.sendFile(__dirname + '/LoginOrRegister.html');
+  }
 });
 
 // Route to serve the login page:
@@ -71,14 +77,15 @@ app.post('/login', async function(req, res) {
     const user = await collection.findOne({ userID, userPASS });
 
     if (user) {
-      // If user exists and credentials are valid, set authentication cookie (expires in 1 hour)
-      res.cookie('auth', 'authenticated', { maxAge: 3600000 });
+      // If user exists and credentials are valid, set a unique authentication cookie (expires in 1 hour)
+      const uniqueCookieValue = userID + Date.now(); // Creating a unique value for the cookie
+      res.cookie('auth', uniqueCookieValue, { maxAge: 3600000 });
       
       // Log successful login
       console.log("User logged in:", userID);
 
       // Redirect to a welcome page or dashboard
-      res.redirect(__dirname + '/welcome.html');
+      res.sendFile(__dirname + '/welcome.html');
     } else {
       // If credentials are invalid, show an error message and redirect to login page
       res.send('Invalid username or password. <a href="/login.html">Try again</a>');
@@ -116,4 +123,25 @@ app.get('/api/mongo/:item', async function(req, res) {
   } finally {
     await client.close();
   }
+});
+
+// Route to clear all cookies:
+app.get('/clearcookies', function(req, res) {
+  res.clearCookie('auth');
+  res.redirect('/'); // Redirect to default endpoint
+});
+
+// Route to report cookies:
+app.get('/reportcookies', function(req, res) {
+  res.send(req.cookies); // Send all active cookies
+});
+
+// Serve welcome page:
+app.get('/welcome.html', function(req, res) {
+  res.sendFile(__dirname + '/welcome.html');
+});
+
+// Serve login or register page:
+app.get('/loginOrRegister.html', function(req, res) {
+  res.sendFile(__dirname + '/loginOrRegister.html');
 });
