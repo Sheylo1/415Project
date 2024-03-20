@@ -32,6 +32,11 @@ app.get('/login.html', function(req, res) {
   res.sendFile(__dirname + '/login.html');
 });
 
+// Route to serve the registration page:
+app.get('/register.html', function(req, res) {
+  res.sendFile(__dirname + '/register.html');
+});
+
 // Route to handle registration:
 app.post('/register', async function(req, res) {
   const { userID, userPASS } = req.body;
@@ -133,7 +138,16 @@ app.get('/clearcookies', function(req, res) {
 
 // Route to report cookies:
 app.get('/reportcookies', function(req, res) {
-  res.send(req.cookies); // Send all active cookies
+  const cookies = req.cookies;
+  let cookieReport = '';
+  for (const cookie in cookies) {
+    if (cookies.hasOwnProperty(cookie)) {
+      cookieReport += `${cookie}: ${cookies[cookie]}<br>`;
+    }
+  }
+  // Adding a link to go back to the welcome page
+  cookieReport += '<br><a href="/welcome.html">Back to Welcome Page</a>';
+  res.send(cookieReport); // Send all active cookies along with the link
 });
 
 // Serve welcome page:
