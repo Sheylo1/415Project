@@ -33,8 +33,8 @@ app.get('/Login.html', function(req, res) {
 });
 
 // Route to serve the registration page:
-app.get('/register.html', function(req, res) {
-  res.sendFile(__dirname + '/register.html');
+app.get('/Register.html', function(req, res) {
+  res.sendFile(__dirname + '/Register.html');
 });
 
 // Route to handle registration:
