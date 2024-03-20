@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
   // Check for the existence of an authentication cookie
   if (req.cookies.auth) {
     // If authentication cookie exists, redirect to welcome page
-    res.redirect('/login.html');
+    res.redirect('/Login.html');
   } else {
     // If authentication cookie does not exist, present login or registration form
     res.sendFile(__dirname + '/LoginOrRegister.html');
@@ -28,8 +28,8 @@ app.get('/', function(req, res) {
 });
 
 // Route to serve the login page:
-app.get('/login.html', function(req, res) {
-  res.sendFile(__dirname + '/login.html');
+app.get('/Login.html', function(req, res) {
+  res.sendFile(__dirname + '/Login.html');
 });
 
 // Route to serve the registration page:
@@ -55,7 +55,7 @@ app.post('/register', async function(req, res) {
     console.log("User registered:", userID);
 
     // Redirect to login page after successful registration
-    res.redirect('/login.html');
+    res.redirect('/Login.html');
 
   } catch (error) {
     console.error("Error during registration:", error);
@@ -93,7 +93,7 @@ app.post('/login', async function(req, res) {
       res.sendFile(__dirname + '/welcome.html');
     } else {
       // If credentials are invalid, show an error message and redirect to login page
-      res.send('Invalid username or password. <a href="/login.html">Try again</a>');
+      res.send('Invalid username or password. <a href="/Login.html">Try again</a>');
     }
   } catch (error) {
     console.error("Error during login:", error);
