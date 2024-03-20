@@ -84,7 +84,7 @@ app.post('/login', async function(req, res) {
     if (user) {
       // If user exists and credentials are valid, set a unique authentication cookie (expires in 1 hour)
       const uniqueCookieValue = userID + Date.now(); // Creating a unique value for the cookie
-      res.cookie('auth', uniqueCookieValue, { maxAge: 3600000 });
+      res.cookie('auth', uniqueCookieValue, { maxAge: 60000 });
       
       // Log successful login
       console.log("User logged in:", userID);
