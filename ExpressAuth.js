@@ -90,7 +90,7 @@ app.post('/login', async function(req, res) {
       console.log("User logged in:", userID);
 
       // Redirect to a welcome page or dashboard
-      res.sendFile(__dirname + '/welcome.html');
+      res.sendFile(__dirname + '/Welcome.html');
     } else {
       // If credentials are invalid, show an error message and redirect to login page
       res.send('Invalid username or password. <a href="/Login.html">Try again</a>');
@@ -146,13 +146,13 @@ app.get('/reportcookies', function(req, res) {
     }
   }
   // Adding a link to go back to the welcome page
-  cookieReport += '<br><a href="/welcome.html">Back to Welcome Page</a>';
+  cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a>';
   res.send(cookieReport); // Send all active cookies along with the link
 });
 
 // Serve welcome page:
-app.get('/welcome.html', function(req, res) {
-  res.sendFile(__dirname + '/welcome.html');
+app.get('/Welcome.html', function(req, res) {
+  res.sendFile(__dirname + '/Welcome.html');
 });
 
 // Serve login or register page:
