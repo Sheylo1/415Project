@@ -82,16 +82,6 @@
       border-color: #3498db;
       border-bottom-width: 2px;
     }
-    form .forgot-pass {
-      margin-top: -8px;
-    }
-    form .forgot-pass a {
-      color: #3498db;
-      text-decoration: none;
-    }
-    form .forgot-pass a:hover {
-      text-decoration: underline;
-    }
     form .btn {
       margin: 30px 0;
       height: 45px;
@@ -145,20 +135,18 @@
       <div class="text">
         Login Form
       </div>
-      <form action="#">
+      <form action="/login" method="POST">
         <div class="data">
           <label>Username</label>
-          <input type="userID" required>
+          <input type="text" name="userID" required>
         </div>
         <div class="data">
           <label>Password</label>
-          <input type="userPASS" required>
+          <input type="password" name="userPASS" required>
         </div>
-        <!-- Removed the forgot password option -->
-        <!-- Removed the signup link -->
         <div class="btn">
           <div class="inner"></div>
-          <button type="submit">login</button>
+          <button type="submit">Login</button>
         </div>
       </form>
     </div>
