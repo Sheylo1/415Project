@@ -133,7 +133,7 @@ app.get('/api/mongo/:item', async function(req, res) {
 // Route to clear all cookies:
 app.get('/clearcookies', function(req, res) {
   res.clearCookie('auth');
-  res.redirect('/'); // Redirect to default endpoint
+  res.send('Cookies cleared successfully. <br><a href="/">Return to Default Route</a> <br><a href="/reportcookies">View Active Cookies</a>'); // Confirmation message with links
 });
 
 // Route to report cookies:
