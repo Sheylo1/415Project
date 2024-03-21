@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
   // Check for the existence of a cookie
   if (req.cookies.auth) {
     // If a cookie exists, redirects to welcome page
-    res.redirects('/Login.html');
+    res.redirect('/Login.html');
   } else {
     // If a cookie does not exist, present login or registration form
     res.sendFile(__dirname + '/LoginOrRegister.html');
@@ -65,7 +65,7 @@ app.post('/register', async function(req, res) {
     console.log("User registered:", userID);
 
     // Redirects to login page after successful registration
-    res.redirects('/Login.html');
+    res.redirect('/Login.html');
 
   } catch (error) {
     console.error("Error during registration:", error);
