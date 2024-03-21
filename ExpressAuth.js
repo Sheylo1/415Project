@@ -27,6 +27,11 @@ app.get('/', function(req, res) {
   }
 });
 
+// Serve login or register page:
+app.get('/loginOrRegister.html', function(req, res) {
+  res.sendFile(__dirname + '/loginOrRegister.html');
+});
+
 // Route to serve the login page:
 app.get('/Login.html', function(req, res) {
   res.sendFile(__dirname + '/Login.html');
@@ -35,6 +40,11 @@ app.get('/Login.html', function(req, res) {
 // Route to serve the registration page:
 app.get('/Register.html', function(req, res) {
   res.sendFile(__dirname + '/Register.html');
+});
+
+// Serve welcome page:
+app.get('/Welcome.html', function(req, res) {
+  res.sendFile(__dirname + '/Welcome.html');
 });
 
 // Route to handle registration:
@@ -148,14 +158,4 @@ app.get('/reportcookies', function(req, res) {
   // Adding a link to go back to the welcome page
   cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a>';
   res.send(cookieReport); // Send all active cookies along with the link
-});
-
-// Serve welcome page:
-app.get('/Welcome.html', function(req, res) {
-  res.sendFile(__dirname + '/Welcome.html');
-});
-
-// Serve login or register page:
-app.get('/loginOrRegister.html', function(req, res) {
-  res.sendFile(__dirname + '/loginOrRegister.html');
 });
