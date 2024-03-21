@@ -17,12 +17,12 @@ app.use(cookieParser());
 
 // Default route:
 app.get('/', function(req, res) {
-  // Check for the existence of an authentication cookie
+  // Check for the existence of a cookie
   if (req.cookies.auth) {
-    // If authentication cookie exists, redirect to welcome page
-    res.redirect('/Login.html');
+    // If a cookie exists, redirects to welcome page
+    res.redirects('/Login.html');
   } else {
-    // If authentication cookie does not exist, present login or registration form
+    // If a cookie does not exist, present login or registration form
     res.sendFile(__dirname + '/LoginOrRegister.html');
   }
 });
@@ -41,7 +41,7 @@ app.get('/Register.html', function(req, res) {
 app.post('/register', async function(req, res) {
   const { userID, userPASS } = req.body;
 
-  // Connect to MongoDB
+  // Connects to MongoDB
   const client = new MongoClient(uri);
 
   try {
@@ -54,8 +54,8 @@ app.post('/register', async function(req, res) {
     await collection.insertOne({ userID, userPASS });
     console.log("User registered:", userID);
 
-    // Redirect to login page after successful registration
-    res.redirect('/Login.html');
+    // Redirects to login page after successful registration
+    res.redirects('/Login.html');
 
   } catch (error) {
     console.error("Error during registration:", error);
@@ -78,21 +78,21 @@ app.post('/login', async function(req, res) {
     const database = client.db('crlmdb');
     const collection = database.collection('credentials');
 
-    // Check if the user exists in the database with the provided credentials
+    // Checks if the user exists in the database with the provided credentials
     const user = await collection.findOne({ userID, userPASS });
 
     if (user) {
-      // If user exists and credentials are valid, set a unique authentication cookie (expires in 1 hour)
-      const uniqueCookieValue = userID + Date.now(); // Creating a unique value for the cookie
+      // If the user exists and credentials are valid, set a unique cookie (expires in 1 minute)
+      const uniqueCookieValue = userID + Date.now(); // Will create a unique value for the cookie
       res.cookie('auth', uniqueCookieValue, { maxAge: 60000 });
       
       // Log successful login
       console.log("User logged in:", userID);
 
-      // Redirect to a welcome page or dashboard
+      // Redirectss to a welcome page or dashboard
       res.sendFile(__dirname + '/Welcome.html');
     } else {
-      // If credentials are invalid, show an error message and redirect to login page
+      // If credentials are invalid, show an error message and redirects to login page
       res.send('Invalid username or password. <a href="/Login.html">Try again</a>');
     }
   } catch (error) {
