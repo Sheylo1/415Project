@@ -93,8 +93,7 @@ app.post('/login', async function(req, res) {
 
     if (user) {
       // If the user exists and credentials are valid, set a unique cookie (expires in 1 minute)
-      const uniqueCookieValue = userID + Date.now(); // Will create a unique value for the cookie
-      res.cookie('userID', uniqueCookieValue, { maxAge: 60000 });
+      res.cookie(userID, Date.now(), { maxAge: 60000 });
       
       // Log successful login
       console.log("User logged in:", userID);
@@ -142,12 +141,16 @@ app.get('/api/mongo/:item', async function(req, res) {
 
 // Route to clear all cookies:
 app.get('/clearcookies', function(req, res) {
-  res.clearCookie('userID');
-  res.send('Cookies cleared successfully. <br><a href="/">Return to Default Route</a> <br><a href="/reportcookies">View Active Cookies</a>'); // Confirmation message with links
+  const cookies = req.cookies;
+  for (const cookie in cookies) {
+    res.clearCookie(cookie);
+  }
+  res.send('Cookies cleared successfully. <br><a href="/">Return to Default Route</a> <br><a href="/reportcookies">View Active Cookies</a> <br><a href="/clearcookies">Delete Active Cookie</a>'); // Confirmation message with links
 });
 
 // Route to report cookies:
 app.get('/reportcookies', function(req, res) {
+  console.log(req.cookies)
   const cookies = req.cookies || {};
   let cookieReport = '';
 
@@ -157,6 +160,6 @@ app.get('/reportcookies', function(req, res) {
       cookieReport += `${cookieName}: ${cookies[cookieName]}<br>`;
     }
   }
-  cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a>';
+  cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a> <br><a href="/clearcookies">Delete Active Cookie</a>';
   res.send(cookieReport); // Send all active cookies along with the link
 });
