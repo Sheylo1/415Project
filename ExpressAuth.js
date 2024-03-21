@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
   // Check for the existence of a cookie
   if (req.cookies.auth) {
     // If a cookie exists, redirects to welcome page
-    res.redirect('/Login.html');
+    res.redirect('/Welcome.html');
   } else {
     // If a cookie does not exist, present login or registration form
     res.sendFile(__dirname + '/LoginOrRegister.html');
