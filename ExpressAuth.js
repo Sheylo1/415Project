@@ -18,7 +18,7 @@ app.use(cookieParser());
 // Default route:
 app.get('/', function(req, res) {
   // Check for the existence of a cookie
-  if (req.cookies.auth) {
+  if (req.cookies.userID) {
     // If a cookie exists, redirects to welcome page
     res.redirect('/Welcome.html');
   } else {
@@ -28,8 +28,8 @@ app.get('/', function(req, res) {
 });
 
 // Serve login or register page:
-app.get('/loginOrRegister.html', function(req, res) {
-  res.sendFile(__dirname + '/loginOrRegister.html');
+app.get('/LoginOrRegister.html', function(req, res) {
+  res.sendFile(__dirname + '/LoginOrRegister.html');
 });
 
 // Route to serve the login page:
@@ -94,7 +94,7 @@ app.post('/login', async function(req, res) {
     if (user) {
       // If the user exists and credentials are valid, set a unique cookie (expires in 1 minute)
       const uniqueCookieValue = userID + Date.now(); // Will create a unique value for the cookie
-      res.cookie('auth', uniqueCookieValue, { maxAge: 60000 });
+      res.cookie('userID', uniqueCookieValue, { maxAge: 60000 });
       
       // Log successful login
       console.log("User logged in:", userID);
@@ -142,20 +142,21 @@ app.get('/api/mongo/:item', async function(req, res) {
 
 // Route to clear all cookies:
 app.get('/clearcookies', function(req, res) {
-  res.clearCookie('auth');
+  res.clearCookie('userID');
   res.send('Cookies cleared successfully. <br><a href="/">Return to Default Route</a> <br><a href="/reportcookies">View Active Cookies</a>'); // Confirmation message with links
 });
 
 // Route to report cookies:
 app.get('/reportcookies', function(req, res) {
-  const cookies = req.cookies;
+  const cookies = req.cookies || {};
   let cookieReport = '';
-  for (const cookie in cookies) {
-    if (cookies.hasOwnProperty(cookie)) {
-      cookieReport += `${cookie}: ${cookies[cookie]}<br>`;
+
+  // Iterate over all cookies and include them in the report
+  for (const cookieName in cookies) {
+    if (Object.hasOwnProperty.call(cookies, cookieName)) {
+      cookieReport += `${cookieName}: ${cookies[cookieName]}<br>`;
     }
   }
-  // Adding a link to go back to the welcome page
   cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a>';
   res.send(cookieReport); // Send all active cookies along with the link
 });
