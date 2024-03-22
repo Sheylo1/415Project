@@ -112,33 +112,6 @@ app.post('/login', async function(req, res) {
   }
 });
 
-// Route to access database:
-app.get('/api/mongo/:item', async function(req, res) {
-  const client = new MongoClient(uri);
-
-  try {
-    await client.connect();
-
-    const database = client.db('crlmdb');
-    const collection = database.collection('credentials');
-
-    const query = { userID: req.params.item };
-    const user = await collection.findOne(query);
-
-    if (user) {
-      res.send('Found this: ' + JSON.stringify(user));
-    } else {
-      res.send('User not found');
-    }
-
-  } catch (error) {
-    console.error("Error accessing database:", error);
-    res.status(500).send('Error accessing database');
-  } finally {
-    await client.close();
-  }
-});
-
 // Route to clear all cookies:
 app.get('/clearcookies', function(req, res) {
   const cookies = req.cookies;
