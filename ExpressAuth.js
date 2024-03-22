@@ -102,7 +102,7 @@ app.post('/login', async function(req, res) {
       res.sendFile(__dirname + '/Welcome.html');
     } else {
       // If credentials are invalid, show an error message and redirects to login page
-      res.send('Invalid username or password. <a href="/Login.html">Try again</a>');
+      res.send('Invalid username or password. <a href="/LoginOrRegister.html">Try again</a>');
     }
   } catch (error) {
     console.error("Error during login:", error);
@@ -145,7 +145,7 @@ app.get('/clearcookies', function(req, res) {
   for (const cookie in cookies) {
     res.clearCookie(cookie);
   }
-  res.send('Cookies cleared successfully. <br><a href="/">Return to Default Route</a> <br><a href="/reportcookies">View Active Cookies</a> <br><a href="/clearcookies">Delete Active Cookie</a>'); // Confirmation message with links
+  res.send('Cookies cleared successfully. <br><a href="/">Sign Out</a> <br><a href="/reportcookies">View Active Cookies</a>'); // Confirmation message with links
 });
 
 // Route to report cookies:
@@ -160,6 +160,6 @@ app.get('/reportcookies', function(req, res) {
       cookieReport += `${cookieName}: ${cookies[cookieName]}<br>`;
     }
   }
-  cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a> <br><a href="/clearcookies">Delete Active Cookie</a>';
+  cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a> <br><a href="/clearcookies">Delete Active Cookies</a>';
   res.send(cookieReport); // Send all active cookies along with the link
 });
