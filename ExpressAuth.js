@@ -18,7 +18,7 @@ app.use(cookieParser());
 // Default route:
 app.get('/', function(req, res) {
   // Check for the existence of a cookie
-  if (req.cookies.userID) {
+  if (Object.keys(req.cookies).length > 0) {
     // If a cookie exists, redirects to welcome page
     res.redirect('/Welcome.html');
   } else {
