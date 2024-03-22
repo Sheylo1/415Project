@@ -102,7 +102,7 @@ app.post('/login', async function(req, res) {
       res.sendFile(__dirname + '/Welcome.html');
     } else {
       // If credentials are invalid, show an error message and redirects to login page
-      res.send('Invalid username or password. <a href="/LoginOrRegister.html">Try again</a>');
+      res.send('Invalid username or password. <a href="/">Try again</a>');
     }
   } catch (error) {
     console.error("Error during login:", error);
