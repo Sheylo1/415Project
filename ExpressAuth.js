@@ -145,7 +145,7 @@ app.get('/clearcookies', function(req, res) {
   for (const cookie in cookies) {
     res.clearCookie(cookie);
   }
-  res.send('Cookies cleared successfully. <br><a href="/">Sign Out</a> <br><a href="/reportcookies">View Active Cookies</a>'); // Confirmation message with links
+  res.send('Cookies cleared successfully. <br><a href="/reportcookies">View Active Cookies</a> <br><a href="/">Sign Out</a>'); // Confirmation message with links
 });
 
 // Route to report cookies:
