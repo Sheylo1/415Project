@@ -26,7 +26,7 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/LoginOrRegister.html');
   }
 });
-
+// testing push to repository
 // Serve login or register page:
 app.get('/LoginOrRegister.html', function(req, res) {
   res.sendFile(__dirname + '/LoginOrRegister.html');
