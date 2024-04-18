@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const ObjectId = require('mongodb').ObjectId;
 
 const app = express();
 const port = 3000;
@@ -14,6 +15,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
+
+// Connect to MongoDB
+const client = new MongoClient(uri);
 
 // Default route:
 app.get('/', function(req, res) {
@@ -44,7 +48,139 @@ app.get('/Register.html', function(req, res) {
 
 // Serve welcome page:
 app.get('/Welcome.html', function(req, res) {
-  res.sendFile(__dirname + '/Welcome.html');
+  // Check if the user is authenticated
+  const authenticated = req.cookies.hasOwnProperty('userID');
+
+  // If authenticated, serve the Welcome.html file
+  if (authenticated) {
+    res.sendFile(__dirname + '/Welcome.html');
+  } else {
+    // If not authenticated, redirect to login
+    res.redirect('/');
+  }
+});
+
+
+
+// Route to create a new topic
+app.post('/topics', async function(req, res) {
+  const { title } = req.body;
+
+  try {
+    await client.connect();
+
+    const database = client.db('crlmdb'); 
+    const collection = database.collection('topics');
+
+    await collection.insertOne({ title });
+
+    res.status(201).send('Topic created successfully');
+  } catch (error) {
+    console.error("Error creating topic:", error);
+    res.status(500).send('Error creating topic');
+  } finally {
+    await client.close();
+  }
+});
+
+// Route to post a message to an existing topic
+app.post('/topics/:topicId/messages', async function(req, res) {
+  const { topicId } = req.params;
+  const { content, author } = req.body;
+
+  try {
+    await client.connect();
+
+    const database = client.db('crlmdb');
+    const collection = database.collection('topics');
+
+    await collection.updateOne({ _id: ObjectId(topicId) }, { $push: { messages: { content, author, timestamp: new Date() } } });
+
+    res.status(201).send('Message posted successfully');
+  } catch (error) {
+    console.error("Error posting message:", error);
+    res.status(500).send('Error posting message');
+  } finally {
+    await client.close();
+  }
+});
+
+// Route to subscribe to a topic
+app.post('/subscribe/:topicId', async function(req, res) {
+  const { topicId } = req.params;
+  const userID = req.cookies.userID;
+
+  try {
+    await client.connect();
+
+    const database = client.db('crlmdb');
+    const collection = database.collection('subscriptions');
+
+    // Check if the user is already subscribed to the topic
+    const subscription = await collection.findOne({ userID, topicID: ObjectId(topicId) });
+    if (subscription) {
+      res.status(400).send('User is already subscribed to this topic');
+      return;
+    }
+
+    // If not subscribed, subscribe the user to the topic
+    await collection.insertOne({ userID, topicID: ObjectId(topicId) });
+    res.status(200).send('Subscribed successfully');
+  } catch (error) {
+    console.error("Error subscribing to topic:", error);
+    res.status(500).send('Error subscribing to topic');
+  } finally {
+    await client.close();
+  }
+});
+
+// Route to unsubscribe from a topic
+app.post('/unsubscribe/:topicId', async function(req, res) {
+  const { topicId } = req.params;
+  const userID = req.cookies.userID;
+
+  try {
+    await client.connect();
+
+    const database = client.db('crlmdb');
+    const collection = database.collection('subscriptions');
+
+    // Check if the user is subscribed to the topic
+    const subscription = await collection.findOne({ userID, topicID: ObjectId(topicId) });
+    if (!subscription) {
+      res.status(400).send('User is not subscribed to this topic');
+      return;
+    }
+
+    // If subscribed, unsubscribe the user from the topic
+    await collection.deleteOne({ userID, topicID: ObjectId(topicId) });
+    res.status(200).send('Unsubscribed successfully');
+  } catch (error) {
+    console.error("Error unsubscribing from topic:", error);
+    res.status(500).send('Error unsubscribing from topic');
+  } finally {
+    await client.close();
+  }
+});
+
+// Route to get available topics for subscription
+app.get('/topics', async function(req, res) {
+  try {
+    await client.connect();
+
+    const database = client.db('crlmdb');
+    const collection = database.collection('topics');
+
+    // Retrieve all topics
+    const topics = await collection.find({}).toArray();
+
+    res.status(200).json(topics);
+  } catch (error) {
+    console.error("Error getting topics:", error);
+    res.status(500).send('Error getting topics');
+  } finally {
+    await client.close();
+  }
 });
 
 // Route to handle registration:
