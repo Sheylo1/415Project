@@ -3,15 +3,56 @@
 <head>
   <meta charset="utf-8">
   <title>Welcome</title>
-</head>
-<center><body>
-  <h1>Welcome! Your Cookie has been created!</h1>
-  <a href="/Login.html">Login (Multiple Cookie Use)</a><br><br>
-  <a href="/reportcookies">Report Cookies</a><br><br>
-  <a href="/clearcookies">Clear Cookies</a><br><br>
-  <a href="/LoginOrRegister.html">Sign Out</a>
+  <script>
+    function showTopics() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/topics", true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var topics = JSON.parse(xhr.responseText);
+          var topicsList = document.createElement("ul");
 
-<!-- Add dynamic content for subscribed topics -->
+          topics.forEach(function(topic) {
+            var listItem = document.createElement("li");
+            listItem.textContent = topic.title;
+            topicsList.appendChild(listItem);
+          });
+
+          var button = document.getElementById("showTopicsButton");
+          // Remove existing topics before appending new ones
+          var existingList = button.nextSibling;
+          if (existingList && existingList.tagName === "UL") {
+            existingList.parentNode.removeChild(existingList);
+          }
+          button.parentNode.insertBefore(topicsList, button.nextSibling);
+        }
+      };
+      xhr.send();
+    }
+  </script>
+</head>
+<body>
+  <center>
+    <h1>Welcome! Your Cookie has been created!</h1>
+    <a href="/Login.html">Login (Multiple Cookie Use)</a><br><br>
+    <a href="/reportcookies">Report Cookies</a><br><br>
+    <a href="/clearcookies">Clear Cookies</a><br><br>
+    <a href="/LoginOrRegister.html">Sign Out</a>
+
+    <!-- New form for creating topics -->
+    <h2>Create New Topic</h2>
+    <form action="/topics" method="POST">
+      <input type="text" name="title" placeholder="Enter topic title" required>
+      <button type="submit">Create Topic</button>
+    </form>
+    <br>
+    <button id="showTopicsButton" onclick="showTopics()">Show Topics Available for Subscription</button>
+  </center>
+</body>
+</html>
+
+
+<!-- Add dynamic content for subscribed topics 
 <% if (subscribedTopics.length > 0) { %>
   <h2>Subscribed Topics</h2>
   <ul>
@@ -21,7 +62,7 @@
   </ul>
 <% } %>
 
-<!-- Add link to show available topics for subscription -->
+ #Add link to show available topics for subscription 
 <a href="/topics">Show Topics Available for Subscription</a>
 
 <script>
@@ -30,4 +71,4 @@
   </script>
 
 </body></center>
-</html>
+</html> -->
