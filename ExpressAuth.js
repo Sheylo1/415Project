@@ -48,32 +48,17 @@ app.get('/Register.html', function(req, res) {
 
 // Serve welcome page:
 app.get('/Welcome.html', function(req, res) {
-  // Check if the user is authenticated
-  const authenticated = req.cookies.hasOwnProperty('userID');
-
-  // If authenticated, serve the Welcome.html file
-  if (authenticated) {
-    res.sendFile(__dirname + '/Welcome.html');
-  } else {
-    // If not authenticated, redirect to login
-    res.redirect('/');
-  }
+  res.sendFile(__dirname + '/Welcome.html');
 });
-
-
 
 // Route to create a new topic
 app.post('/topics', async function(req, res) {
   const { title } = req.body;
-
   try {
     await client.connect();
-
     const database = client.db('crlmdb'); 
     const collection = database.collection('topics');
-
     await collection.insertOne({ title });
-
     res.status(201).send('Topic created successfully');
   } catch (error) {
     console.error("Error creating topic:", error);
