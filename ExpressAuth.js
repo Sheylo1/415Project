@@ -2,6 +2,7 @@ const { MongoClient } = require("mongodb");
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const ObjectId = require('mongodb').ObjectId;
+const session = require('express-session');
 
 const app = express();
 const port = 3000;
@@ -18,6 +19,8 @@ app.use(cookieParser());
 
 // Connect to MongoDB
 const client = new MongoClient(uri);
+
+app.use(session({ secret:"testwords" , resave: false, saveUninitialized: true}));
 
 // Default route:
 app.get('/', function(req, res) {
@@ -94,6 +97,7 @@ app.post('/login', async function(req, res) {
 
     // Checks if the user exists in the database with the provided credentials
     const user = await collection.findOne({ userID, userPASS });
+    req.session.userID = userID;
 
     if (user) {
       // If the user exists and credentials are valid, set a unique cookie (expires in 5 minute)
@@ -125,7 +129,7 @@ app.post('/topics', async function(req, res) {
     const collection = database.collection('topics');
     await collection.insertOne({ 
       title,
-      createdBy: userID });
+      createdBy: req.session.userID });
     // Adding the HTML link to the response
     res.status(201).send('Topic created successfully<br><a href="/Welcome.html">Back to Welcome Page</a>');
   } catch (error) {
