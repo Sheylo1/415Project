@@ -118,12 +118,14 @@ app.post('/login', async function(req, res) {
 
 // Route to create a new topic
 app.post('/topics', async function(req, res) {
-  const { title } = req.body;
+  const { title, userID } = req.body;
   try {
     await client.connect();
     const database = client.db('crlmdb'); 
     const collection = database.collection('topics');
-    await collection.insertOne({ title });
+    await collection.insertOne({ 
+      title,
+      createdBy: userID });
     // Adding the HTML link to the response
     res.status(201).send('Topic created successfully<br><a href="/Welcome.html">Back to Welcome Page</a>');
   } catch (error) {
