@@ -8,6 +8,14 @@
     #topicsContainer {
       margin-top: 10px; /* Adjust this value as needed */
     }
+
+    /* Style for individual topic items */
+    .topicItem {
+      padding: 5px;
+      border: 1px solid #2c2c2c;
+      border-radius: 3px;
+      margin-bottom: 2px; /* Adjust margin between topics as needed */
+    }
   </style>
   <script>
     function showTopics() {
@@ -21,6 +29,7 @@
 
           topics.forEach(function(topic) {
             var topicElement = document.createElement("div"); // Create a div for each topic
+            topicElement.classList.add("topicItem"); // Add class for styling
             topicElement.textContent = topic.title;
             topicsContainer.appendChild(topicElement); // Append the topic div to the container
           });
