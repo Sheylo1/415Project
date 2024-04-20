@@ -4,19 +4,16 @@
   <meta charset="utf-8">
   <title>Welcome</title>
   <style>
-    /* Style for the container of topics */
     #topicsContainer {
-      margin-top: 10px; /* Adjust this value as needed */
+      margin-top: 10px; 
     }
-
-    /* Style for individual topic items */
     .topicItem {
       padding: 5px;
       border: 1px solid #2c2c2c;
       border-radius: 3px;
-      margin-bottom: 2px; /* Adjust margin between topics as needed */
-      width: 200px; /* Adjust the width of the topic items */
-      word-wrap: break-word; /* Allow long topic names to break into multiple lines */
+      margin-bottom: 2px;
+      width: 200px;
+      word-wrap: break-word;
     }
   </style>
   <script>
@@ -52,11 +49,10 @@
 </head>
 <body>
   <center>
-    <h1>Welcome! Your Cookie has been created! You can now create a topic!</h1>
+    <h1>Welcome!</h1>
+    <h3>Your Cookie has been created! You can now create a topic!</h3><br>
     <a href="/reportcookies">Report Cookies</a><br><br>
     <a href="/clearcookies">Clear Cookies</a><br><br>
-
-    <!-- New form for creating topics -->
     <h2>Create New Topic</h2>
     <form action="/topics" method="POST">
       <input type="text" name="title" placeholder="Enter topic title" required>
