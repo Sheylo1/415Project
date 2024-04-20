@@ -50,17 +50,20 @@
 <body>
   <center>
     <h1>Welcome!</h1>
-    <h3>Your Cookie has been created! You can now create a topic!</h3><br>
+    <h3>Your Cookie has been created! You can now create a topic!</h3>
+    <h4>---------------------------------------------------------</h4>
     <a href="/reportcookies">Report Cookies</a><br><br>
     <a href="/clearcookies">Clear Cookies</a><br><br>
+    <div>---------------------------------------------------------</div>
     <h2>Create New Topic</h2>
     <form action="/topics" method="POST">
       <input type="text" name="title" placeholder="Enter topic title" required>
       <button type="submit">Create Topic</button>
     </form>
     <br>
-    <button id="showTopicsButton" onclick="showTopics()">Show Topics Available for Subscription</button>
-    <br><br><a href="/LoginOrRegister.html">Sign Out</a>
+    <button id="showTopicsButton" onclick="showTopics()">Show Topics Available for Subscription</button><br>
+    <br><div>---------------------------------------------------------</div>
+    <br><a href="/LoginOrRegister.html">Sign Out</a>
   </center>
 </body>
 </html>
