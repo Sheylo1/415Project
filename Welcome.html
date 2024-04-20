@@ -15,6 +15,13 @@
       width: 200px;
       word-wrap: break-word;
     }
+    hr {
+        border: none;
+        height: 1px;
+        background-color: #000; /* Change this to the desired color */
+        margin: 0;
+        width: 20%;
+    }
   </style>
   <script>
     function showTopics() {
@@ -51,10 +58,10 @@
   <center>
     <h1>Welcome!</h1>
     <h3>Your Cookie has been created! You can now create a topic!</h3>
-    <h4>---------------------------------------------------------</h4>
-    <a href="/reportcookies">Report Cookies</a><br><br>
+    <hr>
+    <br><a href="/reportcookies">Report Cookies</a><br><br>
     <a href="/clearcookies">Clear Cookies</a><br><br>
-    <div>---------------------------------------------------------</div>
+    <hr>
     <h2>Create New Topic</h2>
     <form action="/topics" method="POST">
       <input type="text" name="title" placeholder="Enter topic title" required>
@@ -62,7 +69,7 @@
     </form>
     <br>
     <button id="showTopicsButton" onclick="showTopics()">Show Topics Available for Subscription</button><br>
-    <br><div>---------------------------------------------------------</div>
+    <br><hr>
     <br><a href="/LoginOrRegister.html">Sign Out</a>
   </center>
 </body>
