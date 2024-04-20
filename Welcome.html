@@ -3,6 +3,12 @@
 <head>
   <meta charset="utf-8">
   <title>Welcome</title>
+  <style>
+    /* Style for the container of topics */
+    #topicsContainer {
+      margin-top: 10px; /* Adjust this value as needed */
+    }
+  </style>
   <script>
     function showTopics() {
       var xhr = new XMLHttpRequest();
@@ -10,21 +16,23 @@
       xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var topics = JSON.parse(xhr.responseText);
-          var topicsList = document.createElement("ul");
+          var topicsContainer = document.createElement("div"); // Create a container for topics
+          topicsContainer.id = "topicsContainer"; // Set id for styling
 
           topics.forEach(function(topic) {
-            var listItem = document.createElement("li");
-            listItem.textContent = topic.title;
-            topicsList.appendChild(listItem);
+            var topicElement = document.createElement("div"); // Create a div for each topic
+            topicElement.textContent = topic.title;
+            topicsContainer.appendChild(topicElement); // Append the topic div to the container
           });
 
           var button = document.getElementById("showTopicsButton");
           // Remove existing topics before appending new ones
-          var existingList = button.nextSibling;
-          if (existingList && existingList.tagName === "UL") {
-            existingList.parentNode.removeChild(existingList);
+          var existingContainer = button.nextSibling;
+          if (existingContainer && existingContainer.id === "topicsContainer") {
+            existingContainer.parentNode.removeChild(existingContainer);
           }
-          button.parentNode.insertBefore(topicsList, button.nextSibling);
+          // Append the topics container
+          button.parentNode.insertBefore(topicsContainer, button.nextSibling);
         }
       };
       xhr.send();
@@ -50,25 +58,3 @@
   </center>
 </body>
 </html>
-
-
-<!-- Add dynamic content for subscribed topics 
-<% if (subscribedTopics.length > 0) { %>
-  <h2>Subscribed Topics</h2>
-  <ul>
-    <% subscribedTopics.forEach(topic => { %>
-      <li><%= topic.title %> <button onclick="unsubscribe('<%= topic._id %>')">Unsubscribe</button></li>
-    <% }); %>
-  </ul>
-<% } %>
-
- #Add link to show available topics for subscription 
-<a href="/topics">Show Topics Available for Subscription</a>
-
-<script>
-  function unsubscribe(topicId) {
-  }
-  </script>
-
-</body></center>
-</html> -->
