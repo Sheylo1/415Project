@@ -36,7 +36,7 @@
           topics.forEach(function(topic) {
             var topicElement = document.createElement("div"); // Create a div for each topic
             topicElement.classList.add("topicItem"); // Add class for styling
-            topicElement.textContent = topic.title;
+            topicElement.innerHTML = "<strong>Title:</strong> " + topic.title + "<br><strong>Created By:</strong> " + topic.createdBy;
             topicsContainer.appendChild(topicElement); // Append the topic div to the container
           });
 
@@ -68,7 +68,7 @@
       <button type="submit">Create Topic</button>
     </form>
     <br>
-    <button id="showTopicsButton" onclick="showTopics()">Show Topics Available for Subscription</button><br>
+    <button id="showTopicsButton" onclick="showTopics('<%= userID %>')">Show Topics Available for Subscription</button><br>
     <br><hr>
     <br><a href="/LoginOrRegister.html">Sign Out</a>
   </center>
