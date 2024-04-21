@@ -47,6 +47,12 @@ app.get('/Login.html', function(req, res) {
   res.sendFile(__dirname + '/Login.html');
 });
 
+// Route to serve the comment page:
+app.get('/comments.html', function(req, res) {
+  res.sendFile(__dirname + '/comments.html');
+});
+
+
 // Route to serve the registration page:
 app.get('/Register.html', function(req, res) {
   res.sendFile(__dirname + '/Register.html');
