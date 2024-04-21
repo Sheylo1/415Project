@@ -103,6 +103,71 @@ app.post('/login', async function(req, res) {
   }
 });
 
+// Route to handle adding comments
+app.post('/comments', async function(req, res) {
+  try {
+    const { topicID, commentContent } = req.body;
+    
+    // Check if the topicID and commentContent are provided
+    if (!topicID || !commentContent) {
+      return res.status(400).send('Missing required fields');
+    }
+
+    // Add the comment to the database
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'comments');
+    await collection.insertOne({
+      topicID,
+      commentContent,
+      userID: req.session.userID, // Add the userID from the session
+      dateTime: new Date().toISOString()
+    });
+
+    // Send a success response
+    res.status(201).send('Comment added successfully');
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).send('Error adding comment');
+  } finally {
+    await database.close();
+  }
+});
+
+// Route to handle retrieving comments for a specific topic
+app.get('/comments', async function(req, res) {
+  try {
+    const { topicID } = req.query;
+
+    // Check if the topicID is provided
+    if (!topicID) {
+      return res.status(400).send('Missing required parameter: topicID');
+    }
+
+    // Retrieve comments for the specified topicID
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'comments');
+    const comments = await collection.find({ topicID }).toArray();
+
+    // Construct the response HTML with comments, userID, and dateTime
+    let responseHTML = '<h2>Comments:</h2>';
+    comments.forEach(comment => {
+      responseHTML += `<div><strong>User:</strong> ${comment.userID}<br>`;
+      responseHTML += `<strong>Date:</strong> ${new Date(comment.dateTime).toLocaleString()}<br>`;
+      responseHTML += `<strong>Comment:</strong> ${comment.commentContent}</div><br>`;
+    });
+
+    // Send the response HTML
+    res.status(200).send(responseHTML);
+  } catch (error) {
+    console.error("Error retrieving comments:", error);
+    res.status(500).send('Error retrieving comments');
+  } finally {
+    await database.close();
+  }
+});
+
+
+
 // Route to create a new topic
 app.post('/topics', async function(req, res) {
   try {
