@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Comments</title>
+</head>
+<body>
+  <h1 id="titleHeader"></h1>
+  
+  <h2>Add a Comment</h2>
+  <form id="commentForm">
+    <input type="hidden" id="topicID" name="topicID" value="">
+    <textarea id="commentContent" name="commentContent" rows="4" cols="50" placeholder="Enter your comment here" required></textarea><br>
+    <button type="submit">Post Comment</button>
+  </form>
+
+  <script>
+    // Get the title from the URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const title = urlParams.get('title');
+
+    // Set the title in the header
+    document.getElementById('titleHeader').textContent = 'Title: ' + title;
+
+    // Set the topicID in the hidden input field
+    document.getElementById('topicID').value = title;
+
+    // Handle form submission
+    document.getElementById('commentForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      const formData = new FormData(this); // Get form data
+      const commentData = Object.fromEntries(formData.entries()); // Convert FormData to object
+
+      // Add current date and time to commentData
+      commentData.dateTime = new Date().toISOString();
+
+      // Add user information here if available
+
+      // Send a POST request to the server to save the comment
+      fetch('/comments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(commentData)
+      })
+      .then(response => {
+        if (response.ok) {
+          // Comment posted successfully
+          console.log('Comment posted successfully');
+          // Optionally, redirect or display a success message
+        } else {
+          // Error posting comment
+          console.error('Error posting comment');
+          // Optionally, display an error message to the user
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Optionally, display an error message to the user
+      });
+    });
+  </script>
+</body>
+</html>
