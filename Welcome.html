@@ -23,36 +23,53 @@
         width: 20%;
     }
   </style>
-  <script>
-    function showTopics() {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "/topics", true);
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var topics = JSON.parse(xhr.responseText);
-          var topicsContainer = document.createElement("div"); // Create a container for topics
-          topicsContainer.id = "topicsContainer"; // Set id for styling
+<script>
+  function showTopics() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/topics", true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var topics = JSON.parse(xhr.responseText);
+        var topicsContainer = document.createElement("div"); // Create a container for topics
+        topicsContainer.id = "topicsContainer"; // Set id for styling
 
-          topics.forEach(function(topic) {
-            var topicElement = document.createElement("div"); // Create a div for each topic
-            topicElement.classList.add("topicItem"); // Add class for styling
-            topicElement.innerHTML = "<strong>Title:</strong> " + topic.title + "<br><strong>Created By:</strong> " + topic.createdBy;
-            topicsContainer.appendChild(topicElement); // Append the topic div to the container
-          });
+        topics.forEach(function(topic) {
+          var topicElement = document.createElement("div"); // Create a div for each topic
+          topicElement.classList.add("topicItem"); // Add class for styling
 
-          var button = document.getElementById("showTopicsButton");
-          // Remove existing topics before appending new ones
-          var existingContainer = button.nextSibling;
-          if (existingContainer && existingContainer.id === "topicsContainer") {
-            existingContainer.parentNode.removeChild(existingContainer);
-          }
-          // Append the topics container
-          button.parentNode.insertBefore(topicsContainer, button.nextSibling);
+          // Create a link for each topic title
+          var link = document.createElement("a");
+          var commentsUrl = "/comments.html?title=" + encodeURIComponent(topic.title); // Construct comments page URL
+          link.href = commentsUrl;
+          link.textContent = topic.title;
+          link.style.display = "block"; // Make the link block-level for better clickability
+          link.style.fontWeight = "bold"; // Make the link bold
+          link.style.marginBottom = "5px"; // Add margin below the link
+          topicElement.appendChild(link);
+
+          // Add createdBy information
+          var createdByElement = document.createElement("div");
+          createdByElement.textContent = "Created By: " + topic.createdBy;
+          topicElement.appendChild(createdByElement);
+
+          topicsContainer.appendChild(topicElement); // Append the topic div to the container
+        });
+
+        var button = document.getElementById("showTopicsButton");
+        // Remove existing topics before appending new ones
+        var existingContainer = button.nextSibling;
+        if (existingContainer && existingContainer.id === "topicsContainer") {
+          existingContainer.parentNode.removeChild(existingContainer);
         }
-      };
-      xhr.send();
-    }
-  </script>
+        // Append the topics container
+        button.parentNode.insertBefore(topicsContainer, button.nextSibling);
+      }
+    };
+    xhr.send();
+  }
+</script>
+
+  
 </head>
 <body>
   <center>
