@@ -3,16 +3,54 @@
 <head>
   <meta charset="utf-8">
   <title>Comments</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #container {
+      text-align: center;
+    }
+
+    #commentsContainer {
+      margin-top: 20px;
+      border: 1px solid #ccc; /* Add border */
+      border-radius: 5px; /* Add border radius */
+      padding: 15px; /* Add padding */
+      width: 100%; /* Add width */
+      box-sizing: border-box; /* Include padding in width calculation */
+      overflow-y: hidden; /* Hide vertical scrollbar */
+
+    }
+
+    .comment {
+      border-bottom: 1px solid #ccc; /* Add separator */
+      padding: 10px 0; /* Adjust padding */
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-  <h1 id="titleHeader"></h1>
-  
-  <h2>Add a Comment</h2>
-  <form id="commentForm">
-    <input type="hidden" id="topicID" name="topicID" value="">
-    <textarea id="commentContent" name="commentContent" rows="4" cols="50" placeholder="Enter your comment here" required></textarea><br>
-    <button type="submit">Post Comment</button>
-  </form>
+  <div id="container">
+    <h1 id="titleHeader"></h1>
+    
+    <h2>Add a Comment</h2>
+    <form id="commentForm">
+      <input type="hidden" id="topicID" name="topicID" value="">
+      <textarea id="commentContent" name="commentContent" rows="4" cols="50" placeholder="Enter your comment here" required></textarea><br>
+      <button type="submit">Post Comment</button>
+    </form>
+    <center>
+      <div id="commentsContainer">
+        <table><td></td></table>
+      </div>
+    </center>
+  </div>
 
   <script>
     // Get the title from the URL query parameters
@@ -24,6 +62,23 @@
 
     // Set the topicID in the hidden input field
     document.getElementById('topicID').value = title;
+
+    // Function to fetch and display comments
+    async function fetchAndDisplayComments() {
+      try {
+        const response = await fetch(`/comments?topicID=${encodeURIComponent(title)}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch comments');
+        }
+        const comments = await response.text();
+        document.getElementById('commentsContainer').innerHTML = comments;
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    }
+
+    // Initial fetch and display of comments
+    fetchAndDisplayComments();
 
     // Handle form submission
     document.getElementById('commentForm').addEventListener('submit', function(event) {
@@ -47,7 +102,8 @@
       })
       .then(response => {
         if (response.ok) {
-          // Comment posted successfully
+          // Comment posted successfully, fetch and display updated comments
+          fetchAndDisplayComments();
           console.log('Comment posted successfully');
           // Optionally, redirect or display a success message
         } else {
