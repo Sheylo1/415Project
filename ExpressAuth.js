@@ -3,11 +3,12 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const ObjectId = require('mongodb').ObjectId;
 const session = require('express-session');
+const Database = require('./dataContext'); // Adjust the path as per your project structure
 
 const app = express();
 const port = 3000;
-// test
-const uri = "mongodb+srv://ExpressAccount:JvmdZ7svEXsLGfBn@cluster0.xheynkp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+const database = new Database(); // Creating an instance of the Database singleton
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
@@ -16,24 +17,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(cookieParser());
-
-// Connect to MongoDB
-const client = new MongoClient(uri);
-
-app.use(session({ secret:"testwords" , resave: false, saveUninitialized: true}));
+app.use(session({ secret: "testwords", resave: false, saveUninitialized: true }));
 
 // Default route:
-app.get('/', function(req, res) {
-  // Check for the existence of a cookie
-  if (Object.keys(req.cookies).length > 0) {
-    // If a cookie exists, redirects to welcome page
-    res.redirect('/Welcome.html');
-  } else {
-    // If a cookie does not exist, present login or registration form
-    res.sendFile(__dirname + '/LoginOrRegister.html');
+app.get('/', async function(req, res) {
+  try {
+    // Check for the existence of a cookie
+    if (Object.keys(req.cookies).length > 0 && req.cookies.hasOwnProperty(req.session.userID)) {
+      // If a cookie exists for the current user, redirects to welcome page
+      res.redirect('/Welcome.html');
+    } else {
+      // If a cookie does not exist or is invalid, present login or registration form
+      res.sendFile(__dirname + '/LoginOrRegister.html');
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send('Internal Server Error');
   }
 });
-// testing push to repository
+
+
 // Serve login or register page:
 app.get('/LoginOrRegister.html', function(req, res) {
   res.sendFile(__dirname + '/LoginOrRegister.html');
@@ -56,107 +59,74 @@ app.get('/Welcome.html', function(req, res) {
 
 // Route to handle registration:
 app.post('/register', async function(req, res) {
-  const { userID, userPASS } = req.body;
-
-  // Connects to MongoDB
-  const client = new MongoClient(uri);
-
   try {
-    await client.connect();
-
-    const database = client.db('crlmdb');
-    const collection = database.collection('credentials');
-
-    // Insert user data into MongoDB
+    const { userID, userPASS } = req.body;
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'credentials');
     await collection.insertOne({ userID, userPASS });
     console.log("User registered:", userID);
-
-    // Redirects to login page after successful registration
     res.redirect('/Login.html');
-
   } catch (error) {
     console.error("Error during registration:", error);
     res.status(500).send('Error during registration');
   } finally {
-    await client.close();
+    await database.close();
   }
 });
 
 // Route to handle login requests:
 app.post('/login', async function(req, res) {
-  const { userID, userPASS } = req.body;
-
-  // Connect to MongoDB
-  const client = new MongoClient(uri);
-
   try {
-    await client.connect();
-
-    const database = client.db('crlmdb');
-    const collection = database.collection('credentials');
-
-    // Checks if the user exists in the database with the provided credentials
+    const { userID, userPASS } = req.body;
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'credentials');
     const user = await collection.findOne({ userID, userPASS });
     req.session.userID = userID;
-
     if (user) {
-      // If the user exists and credentials are valid, set a unique cookie (expires in 5 minute)
       res.cookie(userID, Date.now(), { maxAge: 300000 });
-      
-      // Log successful login
       console.log("User logged in:", userID);
-
-      // Redirectss to a welcome page or dashboard
       res.sendFile(__dirname + '/Welcome.html');
     } else {
-      // If credentials are invalid, show an error message and redirects to login page
       res.send('Invalid username or password. <a href="/">Try again</a>');
     }
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).send('Error during login');
   } finally {
-    await client.close();
+    await database.close();
   }
 });
 
 // Route to create a new topic
 app.post('/topics', async function(req, res) {
-  const { title, userID } = req.body;
   try {
-    await client.connect();
-    const database = client.db('crlmdb'); 
-    const collection = database.collection('topics');
+    const { title, userID } = req.body;
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'topics');
     await collection.insertOne({ 
       title,
       createdBy: req.session.userID });
-    // Adding the HTML link to the response
     res.status(201).send('Topic created successfully<br><a href="/Welcome.html">Back to Welcome Page</a>');
   } catch (error) {
     console.error("Error creating topic:", error);
     res.status(500).send('Error creating topic');
   } finally {
-    await client.close();
+    await database.close();
   }
 });
 
 // Route to get available topics for subscription
 app.get('/topics', async function(req, res) {
   try {
-    await client.connect();
-
-    const database = client.db('crlmdb');
-    const collection = database.collection('topics');
-
-    // Retrieve all topics
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'topics');
     const topics = await collection.find({}).toArray();
-
     res.status(200).json(topics);
   } catch (error) {
     console.error("Error getting topics:", error);
     res.status(500).send('Error getting topics');
   } finally {
-    await client.close();
+    await database.close();
   }
 });
 
@@ -171,16 +141,13 @@ app.get('/clearcookies', function(req, res) {
 
 // Route to report cookies:
 app.get('/reportcookies', function(req, res) {
-  console.log(req.cookies)
   const cookies = req.cookies || {};
   let cookieReport = '';
-
-  // Iterate over all cookies and include them in the report
   for (const cookieName in cookies) {
-    if (Object.hasOwnProperty.call(cookies, cookieName)) {
+    if (Object.hasOwnProperty.call(cookies, cookieName) && cookieName !== 'connect.sid') {
       cookieReport += `${cookieName}: ${cookies[cookieName]}<br>`;
     }
   }
   cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a> <br><a href="/reportcookies">View Active Cookies</a> <br><a href="/clearcookies">Delete Active Cookies</a>';
-  res.send(cookieReport); // Send all active cookies along with the link
+  res.send(cookieReport); // Send all active cookies except connect.sid along with the link
 });
