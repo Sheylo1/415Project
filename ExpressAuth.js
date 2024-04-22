@@ -155,6 +155,7 @@ app.get('/comments', async function(req, res) {
     // Construct the response HTML with comments, userID, and dateTime
     let responseHTML = '<h2>Comments:</h2>';
     comments.forEach(comment => {
+      responseHTML += `<div><strong>Topic:</strong> ${comment.topicID}<br>`;
       responseHTML += `<div><strong>User:</strong> ${comment.userID}<br>`;
       responseHTML += `<strong>Date:</strong> ${new Date(comment.dateTime).toLocaleString()}<br>`;
       responseHTML += `<strong>Comment:</strong> ${comment.commentContent}</div><br>`;
@@ -199,12 +200,15 @@ app.get('/recentcomments', async function(req, res) {
 // Route to create a new topic
 app.post('/topics', async function(req, res) {
   try {
-    const { title, userID } = req.body;
+    const { title } = req.body;
+    const userID = req.session.userID;
     await database.connect();
     const collection = database.getCollection('crlmdb', 'topics');
     await collection.insertOne({ 
       title,
-      createdBy: req.session.userID });
+      createdBy: req.session.userID,
+      subscribedUsers: [userID]
+     });
     res.status(201).send('Topic created successfully<br><a href="/Welcome.html">Back to Welcome Page</a>');
   } catch (error) {
     console.error("Error creating topic:", error);
