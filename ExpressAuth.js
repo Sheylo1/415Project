@@ -113,10 +113,14 @@ app.post('/comments', async function(req, res) {
       return res.status(400).send('Missing required fields');
     }
 
-    // Add the comment to the database
+    // Generate a unique comment ID
+    const commentID = new ObjectId();
+
+    // Add the comment to the database with unique comment ID
     await database.connect();
     const collection = database.getCollection('crlmdb', 'comments');
     await collection.insertOne({
+      commentID,
       topicID,
       commentContent,
       userID: req.session.userID, // Add the userID from the session
@@ -166,7 +170,31 @@ app.get('/comments', async function(req, res) {
   }
 });
 
+// Route to handle retrieving the two most recent comments from the database
+app.get('/recentcomments', async function(req, res) {
+  try {
+    // Connect to the database
+    await database.connect();
+    
+    // Get the comments collection
+    const collection = database.getCollection('crlmdb', 'comments');
+    
+    // Find the two most recent comments
+    const comments = await collection.find()
+    .sort({ _id: -1 }) // Sort by _id in descending order (assuming it's an ObjectId)
+    .limit(2) // Limit to two comments
+    .toArray();
 
+    // Send the comments as JSON response
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error("Error retrieving recent comments:", error);
+    res.status(500).send('Error retrieving recent comments');
+  } finally {
+    // Close the database connection
+    await database.close();
+  }
+});
 
 // Route to create a new topic
 app.post('/topics', async function(req, res) {
@@ -196,6 +224,27 @@ app.get('/topics', async function(req, res) {
   } catch (error) {
     console.error("Error getting topics:", error);
     res.status(500).send('Error getting topics');
+  } finally {
+    await database.close();
+  }
+});
+
+// Route to handle retrieving subscribed topics for the current user
+app.get('/subscribedtopics', async function(req, res) {
+  try {
+    const userID = req.session.userID;
+
+    if (!userID) {
+      return res.status(401).send('Unauthorized');
+    }
+
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'topics');
+    const subscribedTopics = await collection.find({ subscribedUsers: userID }).toArray();
+    res.status(200).json(subscribedTopics);
+  } catch (error) {
+    console.error("Error getting subscribed topics:", error);
+    res.status(500).send('Error getting subscribed topics');
   } finally {
     await database.close();
   }
