@@ -22,6 +22,10 @@
         margin: 0;
         width: 20%;
     }
+    .buttonContainer {
+      display: flex;
+      justify-content: space-between;
+    }
   </style>
 <script>
   function showTopics() {
@@ -52,6 +56,28 @@
           createdByElement.textContent = "Created By: " + topic.createdBy;
           topicElement.appendChild(createdByElement);
 
+          // Create a container for buttons
+          var buttonContainer = document.createElement("div");
+          buttonContainer.classList.add("buttonContainer");
+
+          // Add a button to subscribe to the topic
+          var subscribeButton = document.createElement("button");
+          subscribeButton.textContent = "Subscribe";
+          subscribeButton.onclick = function() {
+            subscribeToTopic(topic._id);
+          };
+          buttonContainer.appendChild(subscribeButton);
+
+          // Add a button to unsubscribe from the topic
+          var unsubscribeButton = document.createElement("button");
+          unsubscribeButton.textContent = "Unsubscribe";
+          unsubscribeButton.onclick = function() {
+            unsubscribeFromTopic(topic._id);
+          };
+          buttonContainer.appendChild(unsubscribeButton);
+
+          topicElement.appendChild(buttonContainer); // Append the button container to the topic div
+
           topicsContainer.appendChild(topicElement); // Append the topic div to the container
         });
 
@@ -66,6 +92,40 @@
       }
     };
     xhr.send();
+  }
+
+  // Function to subscribe to a topic
+  function subscribeToTopic(topicID) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/subscribe", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          alert("Subscribed to the topic successfully");
+        } else {
+          alert("Failed to subscribe to the topic");
+        }
+      }
+    };
+    xhr.send(JSON.stringify({ topicID: topicID }));
+  }
+
+  // Function to unsubscribe from a topic
+  function unsubscribeFromTopic(topicID) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/unsubscribe", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          alert("Unsubscribed from the topic successfully");
+        } else {
+          alert("Failed to unsubscribe from the topic");
+        }
+      }
+    };
+    xhr.send(JSON.stringify({ topicID: topicID }));
   }
 </script>
 
