@@ -3,12 +3,12 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const ObjectId = require('mongodb').ObjectId;
 const session = require('express-session');
-const Database = require('./dataContext'); // Adjust the path as per your project structure
+const Database = require('./dataContext');
 
 const app = express();
 const port = 3000;
 
-const database = new Database(); // Creating an instance of the Database singleton
+const database = new Database(); //This is for the singleton pattern implementation
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
