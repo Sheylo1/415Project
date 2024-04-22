@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <title>Welcome</title>
   <style>
-    #topicsContainer {
+    #topicsContainer, #commentsContainer, #subscribedTopicsContainer {
       margin-top: 10px; 
     }
-    .topicItem {
+    .topicItem, .commentItem {
       padding: 5px;
       border: 1px solid #2c2c2c;
       border-radius: 3px;
@@ -16,11 +16,11 @@
       word-wrap: break-word;
     }
     hr {
-        border: none;
-        height: 1px;
-        background-color: #000; 
-        margin: 0;
-        width: 20%;
+      border: none;
+      height: 1px;
+      background-color: #000; 
+      margin: 0;
+      width: 20%;
     }
     .buttonContainer {
       display: flex;
@@ -34,21 +34,21 @@
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
         var topics = JSON.parse(xhr.responseText);
-        var topicsContainer = document.createElement("div"); // Create a container for topics
-        topicsContainer.id = "topicsContainer"; // Set id for styling
+        var topicsContainer = document.createElement("div");
+        topicsContainer.id = "topicsContainer";
 
         topics.forEach(function(topic) {
-          var topicElement = document.createElement("div"); // Create a div for each topic
-          topicElement.classList.add("topicItem"); // Add class for styling
+          var topicElement = document.createElement("div"); 
+          topicElement.classList.add("topicItem"); //
 
           // Create a link for each topic title
           var link = document.createElement("a");
-          var commentsUrl = "/comments.html?title=" + encodeURIComponent(topic.title); // Construct comments page URL
+          var commentsUrl = "/comments.html?title=" + encodeURIComponent(topic.title);
           link.href = commentsUrl;
           link.textContent = topic.title;
-          link.style.display = "block"; // Make the link block-level for better clickability
-          link.style.fontWeight = "bold"; // Make the link bold
-          link.style.marginBottom = "5px"; // Add margin below the link
+          link.style.display = "block";
+          link.style.fontWeight = "bold"; 
+          link.style.marginBottom = "5px";
           topicElement.appendChild(link);
 
           // Add createdBy information
@@ -76,18 +76,16 @@
           };
           buttonContainer.appendChild(unsubscribeButton);
 
-          topicElement.appendChild(buttonContainer); // Append the button container to the topic div
+          topicElement.appendChild(buttonContainer); 
 
-          topicsContainer.appendChild(topicElement); // Append the topic div to the container
+          topicsContainer.appendChild(topicElement); 
         });
 
         var button = document.getElementById("showTopicsButton");
-        // Remove existing topics before appending new ones
         var existingContainer = button.nextSibling;
         if (existingContainer && existingContainer.id === "topicsContainer") {
           existingContainer.parentNode.removeChild(existingContainer);
         }
-        // Append the topics container
         button.parentNode.insertBefore(topicsContainer, button.nextSibling);
       }
     };
@@ -102,9 +100,9 @@
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          alert("Subscribed to the topic successfully");
+          alert("Subscribed to the topic successfully!");
         } else {
-          alert("Failed to subscribe to the topic");
+          alert("Failed to subscribe to the topic because you are either subscribed or you can't subscribe!");
         }
       }
     };
@@ -119,17 +117,99 @@
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          alert("Unsubscribed from the topic successfully");
+          alert("Unsubscribed from the topic successfully!");
         } else {
-          alert("Failed to unsubscribe from the topic");
+          alert("Failed to unsubscribe from the topic because you are either already unsubscribed or you can't usubscribe!");
         }
       }
     };
     xhr.send(JSON.stringify({ topicID: topicID }));
   }
-</script>
 
-  
+  // Function to fetch and display the two most recent comments
+  function showRecentComments() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/recentcomments", true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var comments = JSON.parse(xhr.responseText);
+        var commentsContainer = document.createElement("div"); 
+        commentsContainer.id = "commentsContainer"; 
+
+        comments.forEach(function(comment) {
+          var commentElement = document.createElement("div"); 
+          commentElement.classList.add("commentItem");
+
+          // Create elements to display the comment details
+          var userElement = document.createElement("div");
+          userElement.textContent = "User: " + comment.userID;
+          var dateElement = document.createElement("div");
+          dateElement.textContent = "Date: " + new Date(comment.dateTime).toLocaleString();
+          var contentElement = document.createElement("div");
+          contentElement.textContent = "Comment: " + comment.commentContent;
+
+          // Append comment details to the comment element
+          commentElement.appendChild(userElement);
+          commentElement.appendChild(dateElement);
+          commentElement.appendChild(contentElement);
+
+          // Append the comment element to the comments container
+          commentsContainer.appendChild(commentElement);
+        });
+
+        // Display the comments container
+        var button = document.getElementById("showCommentsButton");
+        button.parentNode.insertBefore(commentsContainer, button.nextSibling);
+      }
+    };
+    xhr.send();
+  }
+
+  // Function to show subscribed topics
+  function showSubscribedTopics() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/subscribedtopics", true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var subscribedTopics = JSON.parse(xhr.responseText);
+        var subscribedTopicsContainer = document.createElement("div"); 
+        subscribedTopicsContainer.id = "subscribedTopicsContainer"; 
+
+        subscribedTopics.forEach(function(topic) {
+          var topicElement = document.createElement("div"); 
+          topicElement.classList.add("topicItem");
+
+          // Create a link for each topic title
+          var link = document.createElement("a");
+          var commentsUrl = "/comments.html?title=" + encodeURIComponent(topic.title); 
+          link.href = commentsUrl;
+          link.textContent = topic.title;
+          link.style.display = "block"; 
+          link.style.fontWeight = "bold"; 
+          link.style.marginBottom = "5px"; 
+          topicElement.appendChild(link);
+
+          // Add createdBy information
+          var createdByElement = document.createElement("div");
+          createdByElement.textContent = "Created By: " + topic.createdBy;
+          topicElement.appendChild(createdByElement);
+
+          subscribedTopicsContainer.appendChild(topicElement); 
+        });
+
+        var button = document.getElementById("showSubscribedTopicsButton");
+        // Remove existing subscribed topics before appending new ones
+        var existingContainer = button.nextSibling;
+        if (existingContainer && existingContainer.id === "subscribedTopicsContainer") {
+          existingContainer.parentNode.removeChild(existingContainer);
+        }
+        // Append the subscribed topics container
+        button.parentNode.insertBefore(subscribedTopicsContainer, button.nextSibling);
+      }
+    };
+    xhr.send();
+  }
+</script>
 </head>
 <body>
   <center>
@@ -145,7 +225,9 @@
       <button type="submit">Create Topic</button>
     </form>
     <br>
-    <button id="showTopicsButton" onclick="showTopics('<%= userID %>')">Show Topics Available for Subscription</button><br>
+    <button id="showSubscribedTopicsButton" onclick="showSubscribedTopics()">Show Subscribed Topics</button><br><br>
+    <button id="showTopicsButton" onclick="showTopics()">Show Topics Available for Subscription</button><br><br>
+    <button id="showCommentsButton" onclick="showRecentComments()">Show Recent Comments</button><br>
     <br><hr>
     <br><a href="/LoginOrRegister.html">Sign Out</a>
   </center>
