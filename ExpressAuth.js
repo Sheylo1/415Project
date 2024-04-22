@@ -201,6 +201,59 @@ app.get('/topics', async function(req, res) {
   }
 });
 
+// Route to handle subscribing to a topic
+app.post('/subscribe', async function(req, res) {
+  try {
+    const { topicID } = req.body;
+    const userID = req.session.userID;
+
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'topics');
+    const result = await collection.updateOne(
+      { _id: new ObjectId(topicID) }, // Use ObjectId directly
+      { $addToSet: { subscribedUsers: userID } }
+    );
+
+    if (result.modifiedCount > 0) {
+      res.status(200).send('Subscribed to the topic successfully');
+    } else {
+      res.status(404).send('Topic not found');
+    }
+  } catch (error) {
+    console.error("Error subscribing to topic:", error);
+    res.status(500).send('Error subscribing to topic');
+  } finally {
+    await database.close();
+  }
+});
+
+// Route to handle unsubscribing from a topic
+app.post('/unsubscribe', async function(req, res) {
+  try {
+    const { topicID } = req.body;
+    const userID = req.session.userID;
+
+    await database.connect();
+    const collection = database.getCollection('crlmdb', 'topics');
+    const result = await collection.updateOne(
+      { _id: new ObjectId(topicID) }, // Use ObjectId directly
+      { $pull: { subscribedUsers: userID } } // Use $pull to remove user from array
+    );
+
+    if (result.modifiedCount > 0) {
+      res.status(200).send('Unsubscribed from the topic successfully');
+    } else {
+      res.status(404).send('Topic not found');
+    }
+  } catch (error) {
+    console.error("Error unsubscribing from topic:", error);
+    res.status(500).send('Error unsubscribing from topic');
+  } finally {
+    await database.close();
+  }
+});
+
+
 // Route to clear all cookies:
 app.get('/clearcookies', function(req, res) {
   const cookies = req.cookies;
