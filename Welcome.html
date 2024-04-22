@@ -39,9 +39,9 @@
 
         topics.forEach(function(topic) {
           var topicElement = document.createElement("div"); 
-          topicElement.classList.add("topicItem"); //
+          topicElement.classList.add("topicItem"); 
 
-          // Create a link for each topic title
+          // Creates a link for each topic title
           var link = document.createElement("a");
           var commentsUrl = "/comments.html?title=" + encodeURIComponent(topic.title);
           link.href = commentsUrl;
@@ -51,16 +51,16 @@
           link.style.marginBottom = "5px";
           topicElement.appendChild(link);
 
-          // Add createdBy information
+          // Adds createdBy information
           var createdByElement = document.createElement("div");
           createdByElement.textContent = "Created By: " + topic.createdBy;
           topicElement.appendChild(createdByElement);
 
-          // Create a container for buttons
+          // Creates a container for buttons
           var buttonContainer = document.createElement("div");
           buttonContainer.classList.add("buttonContainer");
 
-          // Add a button to subscribe to the topic
+          // Adds a button to subscribe to the topic
           var subscribeButton = document.createElement("button");
           subscribeButton.textContent = "Subscribe";
           subscribeButton.onclick = function() {
@@ -68,7 +68,7 @@
           };
           buttonContainer.appendChild(subscribeButton);
 
-          // Add a button to unsubscribe from the topic
+          // Adds a button to unsubscribe from the topic
           var unsubscribeButton = document.createElement("button");
           unsubscribeButton.textContent = "Unsubscribe";
           unsubscribeButton.onclick = function() {
@@ -140,30 +140,30 @@
           var commentElement = document.createElement("div"); 
           commentElement.classList.add("commentItem");
 
-          // Create elements to display the comment details
-          var userElement = document.createElement("div");
-          userElement.textContent = "User: " + comment.userID;
+          // Creates elements to display the comment details
           var dateElement = document.createElement("div");
           dateElement.textContent = "Date: " + new Date(comment.dateTime).toLocaleString();
+          var userElement = document.createElement("div");
+          userElement.textContent = "User: " + comment.userID;
           var contentElement = document.createElement("div");
           contentElement.textContent = "Comment: " + comment.commentContent;
 
-          // Append comment details to the comment element
-          commentElement.appendChild(userElement);
+          // Appends comment details to the comment element
           commentElement.appendChild(dateElement);
+          commentElement.appendChild(userElement);
           commentElement.appendChild(contentElement);
 
           // Append the comment element to the comments container
           commentsContainer.appendChild(commentElement);
         });
 
-        // Remove existing comments container
+        // Removes existing comments container
         var existingContainer = document.getElementById("commentsContainer");
         if (existingContainer) {
           existingContainer.parentNode.removeChild(existingContainer);
         }
 
-        // Display the new comments container
+        // Displays the new comments container
         var button = document.getElementById("showCommentsButton");
         button.parentNode.insertBefore(commentsContainer, button.nextSibling);
       }
@@ -185,7 +185,7 @@
           var topicElement = document.createElement("div"); 
           topicElement.classList.add("topicItem");
 
-          // Create a link for each topic title
+          // Creates a link for each topic title
           var link = document.createElement("a");
           var commentsUrl = "/comments.html?title=" + encodeURIComponent(topic.title); 
           link.href = commentsUrl;
@@ -195,7 +195,7 @@
           link.style.marginBottom = "5px"; 
           topicElement.appendChild(link);
 
-          // Add createdBy information
+          // Adds createdBy information
           var createdByElement = document.createElement("div");
           createdByElement.textContent = "Created By: " + topic.createdBy;
           topicElement.appendChild(createdByElement);
@@ -204,12 +204,12 @@
         });
 
         var button = document.getElementById("showSubscribedTopicsButton");
-        // Remove existing subscribed topics before appending new ones
+        // Removes existing subscribed topics before appending new ones
         var existingContainer = button.nextSibling;
         if (existingContainer && existingContainer.id === "subscribedTopicsContainer") {
           existingContainer.parentNode.removeChild(existingContainer);
         }
-        // Append the subscribed topics container
+        // Appends the subscribed topics container
         button.parentNode.insertBefore(subscribedTopicsContainer, button.nextSibling);
       }
     };
