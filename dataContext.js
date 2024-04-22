@@ -22,6 +22,7 @@ class Database {
     }
   }
 
+  // This grabs the default collections in the database to return for reference
   getCollection(dbName, collectionName) {
     return this.client.db(dbName).collection(collectionName);
   }
@@ -35,6 +36,7 @@ class Database {
     }
   }
 
+  // This is where existing topics can be updated to added subscribed users to them
   async updateCollectionSchema() {
     try {
       await this.connect();
