@@ -156,8 +156,8 @@ app.get('/comments', async function(req, res) {
     let responseHTML = '<h2>Comments:</h2>';
     comments.forEach(comment => {
       responseHTML += `<div><strong>Topic:</strong> ${comment.topicID}<br>`;
-      responseHTML += `<div><strong>User:</strong> ${comment.userID}<br>`;
       responseHTML += `<strong>Date:</strong> ${new Date(comment.dateTime).toLocaleString()}<br>`;
+      responseHTML += `<div><strong>User:</strong> ${comment.userID}<br>`;
       responseHTML += `<strong>Comment:</strong> ${comment.commentContent}</div><br>`;
     });
 
@@ -289,10 +289,9 @@ app.post('/unsubscribe', async function(req, res) {
     await database.connect();
     const collection = database.getCollection('crlmdb', 'topics');
     const result = await collection.updateOne(
-      { _id: new ObjectId(topicID) }, // Use ObjectId directly
-      { $pull: { subscribedUsers: userID } } // Use $pull to remove user from array
+      { _id: new ObjectId(topicID) }, // Uses ObjectId directly
+      { $pull: { subscribedUsers: userID } } // Uses $pull to remove user from array
     );
-
     if (result.modifiedCount > 0) {
       res.status(200).send('Unsubscribed from the topic successfully');
     } else {
@@ -305,7 +304,6 @@ app.post('/unsubscribe', async function(req, res) {
     await database.close();
   }
 });
-
 
 // Route to clear all cookies:
 app.get('/clearcookies', function(req, res) {
@@ -326,5 +324,5 @@ app.get('/reportcookies', function(req, res) {
     }
   }
   cookieReport += '<br><a href="/Welcome.html">Back to Welcome Page</a> <br><a href="/reportcookies">View Active Cookies</a> <br><a href="/clearcookies">Delete Active Cookies</a>';
-  res.send(cookieReport); // Send all active cookies except connect.sid along with the link
+  res.send(cookieReport); // Send all active cookies
 });
