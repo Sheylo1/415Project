@@ -8,7 +8,7 @@ class Database {
     if (!Database.instance) {
       this.client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
       Database.instance = this;
-      console.log("Database Context is being accessed")
+      console.log("Database Context is being accessed");
     }
     return Database.instance;
   }
@@ -32,6 +32,19 @@ class Database {
       console.log("MongoDB connection closed");
     } catch (error) {
       console.error("Error closing MongoDB connection:", error);
+    }
+  }
+
+  async updateCollectionSchema() {
+    try {
+      await this.connect();
+      const collection = this.getCollection('crlmdb', 'topics');
+      await collection.updateMany({}, { $set: { subscribedUsers: [] } });
+      console.log('MongoDB collection schema updated successfully');
+    } catch (error) {
+      console.error('Error updating MongoDB collection schema:', error);
+    } finally {
+      await this.close();
     }
   }
 }
