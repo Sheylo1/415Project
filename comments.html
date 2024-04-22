@@ -54,14 +54,14 @@
   </div>
 
   <script>
-    // Get the title from the URL query parameters
+    // Gets the title from the URL query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const title = urlParams.get('title');
 
-    // Set the title in the header
+    // Sets the title in the header
     document.getElementById('titleHeader').textContent = 'Title: ' + title;
 
-    // Set the topicID in the hidden input field
+    // Sets the topicID in the hidden input field
     document.getElementById('topicID').value = title;
 
     // Function to fetch and display comments
@@ -78,22 +78,20 @@
       }
     }
 
-    // Initial fetch and display of comments
+    // Initials fetch and display of comments
     fetchAndDisplayComments();
 
-    // Handle form submission
+    // Handles form submission
     document.getElementById('commentForm').addEventListener('submit', function(event) {
       event.preventDefault(); // Prevent default form submission
 
       const formData = new FormData(this); // Get form data
       const commentData = Object.fromEntries(formData.entries()); // Convert FormData to object
 
-      // Add current date and time to commentData
+      // Adds current date and time to commentData
       commentData.dateTime = new Date().toISOString();
 
-      // Add user information here if available
-
-      // Send a POST request to the server to save the comment
+      // Sends a POST request to the server to save the comment
       fetch('/comments', {
         method: 'POST',
         headers: {
@@ -103,19 +101,15 @@
       })
       .then(response => {
         if (response.ok) {
-          // Comment posted successfully, fetch and display updated comments
           fetchAndDisplayComments();
           console.log('Comment posted successfully');
-          // Optionally, redirect or display a success message
         } else {
           // Error posting comment
           console.error('Error posting comment');
-          // Optionally, display an error message to the user
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        // Optionally, display an error message to the user
       });
     });
   </script>
