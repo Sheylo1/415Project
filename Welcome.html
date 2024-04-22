@@ -157,7 +157,13 @@
           commentsContainer.appendChild(commentElement);
         });
 
-        // Display the comments container
+        // Remove existing comments container
+        var existingContainer = document.getElementById("commentsContainer");
+        if (existingContainer) {
+          existingContainer.parentNode.removeChild(existingContainer);
+        }
+
+        // Display the new comments container
         var button = document.getElementById("showCommentsButton");
         button.parentNode.insertBefore(commentsContainer, button.nextSibling);
       }
