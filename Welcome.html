@@ -24,7 +24,7 @@
     }
     .buttonContainer {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
     }
   </style>
 <script>
@@ -67,14 +67,6 @@
             subscribeToTopic(topic._id);
           };
           buttonContainer.appendChild(subscribeButton);
-
-          // Adds a button to unsubscribe from the topic
-          var unsubscribeButton = document.createElement("button");
-          unsubscribeButton.textContent = "Unsubscribe";
-          unsubscribeButton.onclick = function() {
-            unsubscribeFromTopic(topic._id);
-          };
-          buttonContainer.appendChild(unsubscribeButton);
 
           topicElement.appendChild(buttonContainer); 
 
@@ -201,6 +193,20 @@
           var createdByElement = document.createElement("div");
           createdByElement.textContent = "Created By: " + topic.createdBy;
           topicElement.appendChild(createdByElement);
+
+          // Creates a container for buttons
+          var buttonContainer = document.createElement("div");
+          buttonContainer.classList.add("buttonContainer");
+
+          // Adds a button to unsubscribe from the topic
+          var unsubscribeButton = document.createElement("button");
+          unsubscribeButton.textContent = "Unsubscribe";
+          unsubscribeButton.onclick = function() {
+            unsubscribeFromTopic(topic._id);
+          };
+          buttonContainer.appendChild(unsubscribeButton);
+
+          topicElement.appendChild(buttonContainer); 
 
           subscribedTopicsContainer.appendChild(topicElement); 
         });
