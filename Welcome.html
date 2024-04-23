@@ -136,11 +136,11 @@
 
           // Creates elements to display the comment details
           var dateElement = document.createElement("div");
-          dateElement.textContent = "Date: " + new Date(comment.dateTime).toLocaleString();
+          dateElement.innerHTML = "<b>Date:</b> " + new Date(comment.dateTime).toLocaleString();
           var userElement = document.createElement("div");
-          userElement.textContent = "User: " + comment.userID;
+          userElement.innerHTML = "<b>User:</b> " + comment.userID;
           var contentElement = document.createElement("div");
-          contentElement.textContent = "Comment: " + comment.commentContent;
+          contentElement.innerHTML = "<b>Comment:</b> " + comment.commentContent;
 
           // Appends comment details to the comment element
           commentElement.appendChild(dateElement);
