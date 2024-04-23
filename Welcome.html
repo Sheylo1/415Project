@@ -82,10 +82,12 @@
         });
 
         var button = document.getElementById("showTopicsButton");
+        // Removes existing topics before appending new ones
         var existingContainer = button.nextSibling;
         if (existingContainer && existingContainer.id === "topicsContainer") {
           existingContainer.parentNode.removeChild(existingContainer);
         }
+        // Appends the topics container
         button.parentNode.insertBefore(topicsContainer, button.nextSibling);
       }
     };
@@ -153,7 +155,7 @@
           commentElement.appendChild(userElement);
           commentElement.appendChild(contentElement);
 
-          // Append the comment element to the comments container
+          // Appends the comment element to the comments container
           commentsContainer.appendChild(commentElement);
         });
 
